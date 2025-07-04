@@ -1,0 +1,80 @@
+name: Deploy Vue App to GitHub Pages
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+jobs:
+    # 构建 Job
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install dependencies
+              run: |
+                  corepack enable
+                  pnpm install
+
+            - name: Get contributor count for vercel/next.js
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub 自动提供的访问令牌
+              run: |
+                  count=0
+                  page=1
+                  while :; do
+                    result=$(curl -s "https://api.github.com/repos/vercel/next.js/contributors?per_page=100&page=$page" \
+                      -H "Authorization: token $GH_TOKEN")
+                    num=$(echo "$result" | jq length)
+                    [ "$num" -eq 0 ] && break
+                    count=$((count + num))
+                    page=$((page + 1))
+                  done
+                  echo "Total contributors: $count"
+                  echo "CONTRIBUTOR_COUNT=$count" >> $GITHUB_ENV
+
+            - name: Set Environment Variables - Site Meta
+              run: |
+                  count=$(find . -path './node_modules' -prune -o -type f -print | wc -l)
+                  echo "FILES_COUNT=$count" >> $GITHUB_ENV
+                  count=$(find ./src/views -type f -name '*.vue' | wc -l)
+                  echo "PAGES_COUNT=$count" >> $GITHUB_ENV
+
+            - name: Build Vue project
+              env:
+                  MCW_PAGES_COUNT: ${{ env.PAGES_COUNT }}
+                  MCW_FILES_COUNT: ${{ env.FILES_COUNT }}
+                  MCW_CONTRIBUTORS: ${{ env.CONTRIBUTOR_COUNT }}
+              run: pnpm build
+
+            - name: Upload build artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: ./dist
+
+    # 部署 Job
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+
+        steps:
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4

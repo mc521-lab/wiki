@@ -1,0 +1,13 @@
+#app *,
+#app *::before,
+#app *::after {
+    box-sizing: border-box;
+}
+
+#app *:not(.selectable) {
+    user-select: none;
+}
+
+#app img:not(.cursor-pointer) {
+    pointer-events: none;
+}

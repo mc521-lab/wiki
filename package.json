@@ -1,0 +1,35 @@
+{
+    "name": "mc521-wiki",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite --host 127.30.0.2",
+        "build": "run-p type-check \"build-only {@}\" --",
+        "preview": "vite preview",
+        "build-only": "vite build",
+        "type-check": "vue-tsc --build"
+    },
+    "dependencies": {
+        "@iconify/tailwind4": "^1.0.6",
+        "@tailwindcss/vite": "^4.1.11",
+        "pinia": "^3.0.3",
+        "sass-embedded": "^1.89.2",
+        "tailwindcss": "^4.1.11",
+        "vue": "^3.5.17",
+        "vue-router": "^4.5.1"
+    },
+    "devDependencies": {
+        "@iconify-json/arcticons": "^1.2.29",
+        "@iconify-json/mingcute": "^1.2.3",
+        "@tsconfig/node22": "^22.0.2",
+        "@types/node": "^22.15.32",
+        "@vitejs/plugin-vue": "^6.0.0",
+        "@vue/tsconfig": "^0.7.0",
+        "npm-run-all2": "^8.0.4",
+        "typescript": "~5.8.0",
+        "vite": "npm:rolldown-vite@latest",
+        "vite-plugin-vue-devtools": "^7.7.7",
+        "vue-tsc": "^2.2.10"
+    }
+}
