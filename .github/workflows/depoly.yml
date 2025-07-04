@@ -30,14 +30,14 @@ jobs:
                   corepack enable
                   pnpm install
 
-            - name: Get contributor count for vercel/next.js
+            - name: Get contributor count for mc521-lab/wiki
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub 自动提供的访问令牌
               run: |
                   count=0
                   page=1
                   while :; do
-                    result=$(curl -s "https://api.github.com/repos/vercel/next.js/contributors?per_page=100&page=$page" \
+                    result=$(curl -s "https://api.github.com/repos/mc521-lab/wiki/contributors?per_page=100&page=$page" \
                       -H "Authorization: token $GH_TOKEN")
                     num=$(echo "$result" | jq length)
                     [ "$num" -eq 0 ] && break
