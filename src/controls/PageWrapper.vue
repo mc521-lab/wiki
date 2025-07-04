@@ -15,18 +15,31 @@
 
     const $window = window;
 
+    // 使用 Vite 的 import.meta.glob 来预加载所有视图组件
+    const viewModules = import.meta.glob("../views/**/*.vue", { eager: true });
+
     async function loadPage() {
         const pageId = route.path; // 查找 CMSMetadata 中对应的页面
         const page = CMSMetadata.find((item) => item.visitAddr === pageId);
         if (page) {
             try {
-                // 动态导入对应页面模块
-                currentComponent.value = (await import(/* @vite-ignore */ `../views/${page.importAddr}`)).default;
-                // 暴露 Meta
-                metaStore.setMeta(page.meta ?? {});
+                // 构建完整的模块路径
+                const modulePath = `/views/${page.importAddr}`;
+                const resolvedPath = Object.keys(viewModules).find((key) => key.includes(modulePath));
+                if (resolvedPath && viewModules[resolvedPath]) {
+                    // 使用预加载的模块
+                    currentComponent.value = (viewModules[resolvedPath] as any).default;
+                    // 暴露 Meta
+                    metaStore.setMeta(page.meta ?? {});
+                } else {
+                    throw new Error(`Module not found: ${page.importAddr}`);
+                }
             } catch (error) {
                 // 加载失败时，加载 500 页面
-                currentComponent.value = (await import("@/views/500.vue")).default;
+                const errorModulePath = Object.keys(viewModules).find((key) => key.includes("500.vue"));
+                if (errorModulePath) {
+                    currentComponent.value = (viewModules[errorModulePath] as any).default;
+                }
                 metaStore.setMeta({
                     serverType: "diyu",
                     error,
@@ -34,7 +47,10 @@
             }
         } else {
             // 如果没有找到对应的页面，直接加载 404 页面
-            currentComponent.value = (await import("@/views/404.vue")).default;
+            const notFoundModulePath = Object.keys(viewModules).find((key) => key.includes("404.vue"));
+            if (notFoundModulePath) {
+                currentComponent.value = (viewModules[notFoundModulePath] as any).default;
+            }
         }
         isLoading.value = false;
     }
