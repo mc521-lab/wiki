@@ -90,6 +90,7 @@ ol.mcw-ol:not(li.mcw-li ol.mcw-ol) > li:last-child {
 /* Code Block */
 code.mcw-code {
     @apply bg-[#F8F9FA];
+    @apply text-blue-800;
     @apply px-1;
     @apply py-0.5;
 }

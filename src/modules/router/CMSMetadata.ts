@@ -14,6 +14,13 @@ export const CMSMetadata: CMSMetadataItem[] = [
     { visitAddr: "/w/Mota:Wiki", importAddr: "/w/Mota/Wiki.vue", meta: { serverType: "mota", home: true } },
     { visitAddr: "/w/Huodong:Wiki", importAddr: "/w/Huodong/Wiki.vue", meta: { serverType: "huodong", home: true } },
 {
+    "visitAddr": "/w/General:附魔:列表",
+    "importAddr": "/w/General/附魔/列表.vue",
+    "meta": {
+        "serverType": "__general__"
+    }
+},
+{
     "visitAddr": "/w/General:附魔:简介",
     "importAddr": "/w/General/附魔/简介.vue",
     "meta": {
