@@ -14,7 +14,7 @@ permissions:
 jobs:
     # 构建 Job
     build:
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
 
         steps:
             - name: Checkout repository
@@ -34,25 +34,29 @@ jobs:
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub 自动提供的访问令牌
               run: |
-                  count=0
-                  page=1
-                  while :; do
-                    result=$(curl -s "https://api.github.com/repos/mc521-lab/wiki/contributors?per_page=100&page=$page" \
-                      -H "Authorization: token $GH_TOKEN")
-                    num=$(echo "$result" | jq length)
-                    [ "$num" -eq 0 ] && break
-                    count=$((count + num))
-                    page=$((page + 1))
-                  done
-                  echo "Total contributors: $count"
-                  echo "CONTRIBUTOR_COUNT=$count" >> $GITHUB_ENV
+                  $count = 0
+                  $page = 1
+                  while ($true) {
+                      $url = "https://api.github.com/repos/mc521-lab/wiki/contributors?per_page=100&page=$page"
+                      $headers = @{ Authorization = "token $env:GH_TOKEN" }
+                      $result = Invoke-RestMethod -Uri $url -Headers $headers -Method Get
+                      $num = $result.Count
+                      if ($num -eq 0) { break }
+                      $count += $num
+                      $page += 1
+                  }
+                  Write-Output "Total contributors: $count"
+                  "`nCONTRIBUTOR_COUNT=$count" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
             - name: Set Environment Variables - Site Meta
               run: |
-                  count=$(find . -path './node_modules' -prune -o -type f -print | wc -l)
-                  echo "FILES_COUNT=$count" >> $GITHUB_ENV
-                  count=$(find ./src/views -type f -name '*.vue' | wc -l)
-                  echo "PAGES_COUNT=$count" >> $GITHUB_ENV
+                  $files = Get-ChildItem -Recurse -File -Force | Where-Object { -not ($_.FullName -match '\\node_modules\\') }
+                  $filesCount = $files.Count
+                  "`nFILES_COUNT=$filesCount" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+                      
+                  $vueFiles = Get-ChildItem -Recurse -Path "./src/views" -Include "*.vue" -File
+                  $pagesCount = $vueFiles.Count
+                  "`nPAGES_COUNT=$pagesCount" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
             - name: Build Dynamic Pages
               run: ./gen/mcw-builder.exe
