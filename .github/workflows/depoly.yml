@@ -14,7 +14,7 @@ permissions:
 jobs:
     # 构建 Job
     build:
-        runs-on: windows-latest
+        runs-on: ubuntu-latest
 
         steps:
             - name: Checkout repository
