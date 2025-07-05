@@ -28,7 +28,7 @@ your-project/
 │   └── modules/
 │       └── router/
 │           └── CMSMetadata.ts  # 元数据文件
-└── builder/               # 构建器目录
+└── gen/               # 构建器目录
 ```
 
 2. 在 `docs/` 目录中放置你的 Markdown 文件，支持以下格式：
