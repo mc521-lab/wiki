@@ -1,102 +1,127 @@
 <script setup lang="ts">
-    import { ref, onMounted, watch, onUnmounted } from "vue";
-    import type { Component, WatchHandle } from "vue";
+    import { ref, shallowRef, watch, type Component } from "vue";
     import { useRoute } from "vue-router";
-    import { CMSMetadata } from "@/modules/router/CMSMetadata";
-    import { MCWMain, MCWHint } from "@/components";
+    import { useMetaStore } from "@/modules/stores";
+    import { CMSMetadata } from "@/modules/router";
     import { Wrapper } from "@/modules/Wrapper";
-    import useMetaStore from "@/modules/stores/MetaStore";
+    import { MCWAsideBlock, MCWMain } from "@/components";
 
     const route = useRoute();
     const metaStore = useMetaStore();
+    const currentComponent = shallowRef<Component | null>(null);
+    const isLoading = ref(true);
 
-    const isLoading = ref(true); // 加载状态
-    const currentComponent = ref<Component | null>(null); // 存储动态加载的组件
+    // 懒加载所有页面组件
+    const viewModules = import.meta.glob("../views/**/*.vue");
 
-    const $window = window;
-
-    // 使用 Vite 的 import.meta.glob 来预加载所有视图组件
-    const viewModules = import.meta.glob("../views/**/*.vue", { eager: true });
-
-    async function loadPage() {
-        const pageId = route.path; // 查找 CMSMetadata 中对应的页面
-        const page = CMSMetadata.find((item) => item.visitAddr === pageId);
-        if (page) {
-            try {
-                // 构建完整的模块路径
-                const modulePath = `/views/${page.importAddr}`;
-                const resolvedPath = Object.keys(viewModules).find((key) => key.includes(modulePath));
-                if (resolvedPath && viewModules[resolvedPath]) {
-                    // 使用预加载的模块
-                    currentComponent.value = (viewModules[resolvedPath] as any).default;
-                    // 暴露 Meta
-                    metaStore.setMeta(page.meta ?? {});
-                } else {
-                    throw new Error(`Module not found: ${page.importAddr}`);
-                }
-            } catch (error) {
-                // 加载失败时，加载 500 页面
-                const errorModulePath = Object.keys(viewModules).find((key) => key.includes("500.vue"));
-                if (errorModulePath) {
-                    currentComponent.value = (viewModules[errorModulePath] as any).default;
-                }
-                metaStore.setMeta({
-                    serverType: "diyu",
-                    error,
-                });
-            }
-        } else {
-            // 如果没有找到对应的页面，直接加载 404 页面
-            const notFoundModulePath = Object.keys(viewModules).find((key) => key.includes("404.vue"));
-            if (notFoundModulePath) {
-                currentComponent.value = (viewModules[notFoundModulePath] as any).default;
-            }
-        }
-        isLoading.value = false;
+    function normalizePath(path: string) {
+        return decodeURIComponent(path);
     }
 
-    let handle: null | WatchHandle = null;
-    onMounted(() => {
-        handle = watch(
-            () => route.path,
-            async () => {
-                isLoading.value = true;
-                currentComponent.value = null;
-                await loadPage();
-            },
-            { immediate: true }
-        );
-    });
-    onUnmounted(() => {
-        handle?.();
-    });
+    function getPageName() {
+        const _name = (decodeURIComponent(Wrapper.getHeaderPageName(route.path)) ?? "未知页面")
+            .replace("General", "通用指南")
+            .replace("Zhucheng", "主城")
+            .replace("Diaoyu", "钓鱼")
+            .replace("Fuben", "副本")
+            .replace("Mota", "魔塔")
+            .replace("Huodong", "活动");
+        const _splited = _name.split(":");
+        const _end = _splited.pop();
+        if (_splited.length > 1) {
+            return _splited.join("-") + `: ${_end}`;
+        } else if (_splited.length === 1) {
+            return _splited[0] + `: ${_end}`;
+        } else {
+            return _end;
+        }
+    }
+
+    async function loadPage() {
+        isLoading.value = true;
+        setTimeout(async function () {
+            try {
+                const pageId = normalizePath(route.path);
+                const page = CMSMetadata.find((p) => normalizePath(p.visitAddr) === pageId);
+
+                const fullPath = page ? `../views${page.importAddr}` : null;
+
+                if (!fullPath || !(fullPath in viewModules)) {
+                    console.warn(`页面模块 "${fullPath}" 未找到，加载 404 页`);
+                    const fallback = Object.keys(viewModules).find((key) => key.endsWith("/404.vue"));
+                    if (fallback) {
+                        const mod = (await viewModules[fallback]()) as { default: Component };
+                        currentComponent.value = mod.default;
+                    } else {
+                        currentComponent.value = null;
+                    }
+                    isLoading.value = false;
+                    return;
+                }
+
+                const mod = (await viewModules[fullPath]()) as { default: Component };
+                currentComponent.value = mod.default;
+                metaStore.setMeta(page?.meta ?? {});
+
+                isLoading.value = false;
+            } catch (error) {
+                // 加载 500 页
+                const fallback = Object.keys(viewModules).find((key) => key.endsWith("/500.vue"));
+                if (fallback) {
+                    const mod = (await viewModules[fallback]()) as { default: Component };
+                    currentComponent.value = mod.default;
+                } else {
+                    currentComponent.value = null;
+                }
+                isLoading.value = false;
+            }
+        }, 250);
+    }
+
+    // 路由变化时触发加载
+    watch(
+        () => route.path,
+        (newPath, oldPath) => {
+            if (newPath !== oldPath) {
+                loadPage();
+            }
+        },
+        { immediate: true }
+    );
+
+    const $window = window;
 </script>
 
 <template>
     <div class="w-full h-full relative">
         <Transition name="fade" mode="out-in">
             <MCWMain class="top-0 left-0 absolute flex flex-col gap-2" v-if="isLoading">
-                <h1 class="text-2xl font-bold">{{ Wrapper.getHeaderPageName() }}</h1>
-                <hr />
-                <p class="">页面加载中…… 请稍等，如果长时间未加载，请<a href="#" class="underline" @click="$window.location.reload()">刷新</a>页面。</p>
+                <h2 class="mcw-h2">{{ getPageName() }}</h2>
+                <p class="mcw-p">页面加载中…… 请稍等，如果长时间未加载，请<a href="#" class="underline" @click="$window.location.reload()">刷新</a>页面。</p>
             </MCWMain>
         </Transition>
         <Transition name="fade" mode="out-in">
             <div class="w-full h-full absolute top-0 left-0" v-if="!isLoading">
-                <component :is="currentComponent" />
+                <MCWMain class="flex flex-col gap-2">
+                    <h2 class="mcw-h2" v-if="!metaStore.getMeta.home">
+                        {{ getPageName() }}
+                    </h2>
+                    <component :is="currentComponent" />
+                </MCWMain>
+                <MCWAsideBlock></MCWAsideBlock>
             </div>
         </Transition>
     </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
     .fade-enter-active,
     .fade-leave-active {
-        transition: opacity 0.25s ease;
+        transition: all 0.25s ease;
     }
-
     .fade-enter-from,
     .fade-leave-to {
         opacity: 0;
+        transform: scale(0.98);
     }
 </style>

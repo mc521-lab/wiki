@@ -9,9 +9,9 @@
 
 <template>
     <MCWBackground :server-type="serverType" />
-    <div class="grid grid-cols-[10.5vw_89.5vw] h-screen">
-        <MCWAside />
-        <RouterView />
+    <div class="flex flex-row overflow-x-hidden">
+        <MCWAside class="w-[10.5vw]" />
+        <RouterView class="flex-1 min-h-screen" />
     </div>
 </template>
 

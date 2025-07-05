@@ -1,0 +1,104 @@
+@reference "tailwindcss";
+
+/* Heading */
+h1.mcw-h1 {
+    @apply text-3xl;
+    /* @apply font-bold; */
+    @apply mb-4;
+    @apply border-b border-[#A2A9B1];
+}
+h2.mcw-h2 {
+    @apply text-2xl;
+    /* @apply font-bold; */
+    @apply mb-2;
+    @apply border-b border-[#A2A9B1];
+}
+h3.mcw-h3 {
+    @apply text-xl;
+    /* @apply font-bold; */
+    @apply mb-2;
+}
+h4.mcw-h4 {
+    @apply text-lg;
+    /* @apply font-bold; */
+    @apply mb-2;
+}
+h5.mcw-h5 {
+    @apply text-base;
+    /* @apply font-bold; */
+    @apply mb-2;
+}
+h6.mcw-h6 {
+    @apply text-sm;
+    /* @apply font-bold; */
+    @apply mb-2;
+}
+
+/* Paragraph */
+p.mcw-p {
+    @apply mb-2;
+}
+
+/* Link */
+a.mcw-a {
+    @apply text-blue-800 cursor-pointer;
+}
+a.mcw-a:hover {
+    @apply underline;
+}
+a.mcw-a:visited {
+    @apply text-purple-800;
+}
+
+/* Table */
+table.mcw-table {
+    @apply w-fit;
+}
+table.mcw-table th,
+table.mcw-table td {
+    @apply border-2 border-[#A2A9B1];
+    @apply px-4 py-2;
+}
+table.mcw-table th {
+    @apply font-semibold;
+    @apply bg-[#EAECF0];
+}
+table.mcw-table td {
+    @apply bg-[#FFFFFF];
+}
+table.mcw-table td.false {
+    @apply text-[#840606];
+    @apply bg-[#FFC7CE];
+}
+table.mcw-table td.true {
+    @apply text-[#006250];
+    @apply bg-[#C6EFCE];
+}
+
+/* List */
+ul.mcw-ul,
+ol.mcw-ol {
+    list-style: revert;
+    padding-left: revert;
+    margin-left: revert;
+}
+ul.mcw-ul:not(li.mcw-li ul.mcw-ul) > li:last-child,
+ol.mcw-ol:not(li.mcw-li ol.mcw-ol) > li:last-child {
+    @apply mb-2;
+}
+
+/* Code Block */
+code.mcw-code {
+    @apply bg-[#F8F9FA];
+    @apply px-1;
+    @apply py-0.5;
+}
+pre.mcw-pre {
+    @apply bg-[#F8F9FA];
+    @apply p-4;
+}
+pre.mcw-pre code.mcw-code {
+    @apply bg-transparent;
+    @apply px-0;
+    @apply py-0;
+}

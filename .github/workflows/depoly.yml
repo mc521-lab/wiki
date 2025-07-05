@@ -14,7 +14,7 @@ permissions:
 jobs:
     # 构建 Job
     build:
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
 
         steps:
             - name: Checkout repository
@@ -53,6 +53,9 @@ jobs:
                   echo "FILES_COUNT=$count" >> $GITHUB_ENV
                   count=$(find ./src/views -type f -name '*.vue' | wc -l)
                   echo "PAGES_COUNT=$count" >> $GITHUB_ENV
+
+            - name: Build Dynamic Pages
+              run: .\gen\mcw-builder.exe
 
             - name: Build Vue project
               env:

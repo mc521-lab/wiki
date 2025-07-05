@@ -3,7 +3,7 @@
         serverType: string;
     }>();
 
-    const vaildServerType = ["__general__", "zc", "fuben", "mota", "huodong", "diaoyu"];
+    const vaildServerType = ["__general__", "zhucheng", "fuben", "mota", "huodong", "diaoyu"];
 </script>
 
 <template>
@@ -25,7 +25,7 @@
             filter: hue-rotate(-30deg) saturate(1.15);
         }
 
-        &.server-zc {
+        &.server-zhucheng {
             // 主城
             background-image: url("/global/backgrounds/top.png"), url("/global/backgrounds/deeper.png");
             filter: saturate(1);

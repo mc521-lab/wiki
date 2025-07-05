@@ -11,3 +11,7 @@
 #app img:not(.cursor-pointer) {
     pointer-events: none;
 }
+
+::-webkit-scrollbar {
+    display: none;
+}

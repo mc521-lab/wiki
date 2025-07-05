@@ -9,20 +9,23 @@
 </script>
 
 <template>
-    <MCWCard>
+    <MCWCard inner-class="flex flex-col justify-center items-center">
         <img src="/global/brand/wikilogo.png" class="h-24 mx-auto" />
         <br />
-        <p class="text-sm">欢迎来到这个全公开的，可自由编辑的 Wiki，君庭阁中文 Wiki！这里致力于为玩家呈现服务器中的每一处细节。任何人都可以为 Wiki 做出贡献！</p>
+        <p class="mcw-p mb-0! text-sm">
+            欢迎来到这个全公开的，可自由编辑的 Wiki，君庭阁中文 Wiki！<br />这里致力于为玩家呈现服务器中的每一处细节。<br />任何人都可以为 Wiki 做出贡献！
+        </p>
         <br />
-        <p class="text-sm text-center">
+        <p class="mcw-p mb-0! text-sm text-center">
             {{ $env["MCW_PAGES_COUNT"] ?? "?" }} 个页面 · {{ $env["MCW_FILES_COUNT"] ?? "?" }} 个文件 · {{ $env["MCW_CONTRIBUTORS"] ?? 1 }} 位贡献者
         </p>
         <br />
-        <div class="grid grid-cols-4 gap-2">
+        <div class="grid grid-cols-4 gap-2 w-full">
             <MCWButtonBase class="h-12" :color="{ primary: ['#009FD4', '#FFFFFF'] }" primary @click="openLink('https://space.bilibili.com/354529617')">
                 <i class="icon-[mingcute--bilibili-line] size-6" />
             </MCWButtonBase>
             <MCWButtonBase class="h-12" :color="{ primary: ['#ff9600', '#FFFFFF'] }" primary @click="openLink('https://huya.com/ccjun6')">
+                <!-- 虎牙 Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 48 48">
                     <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                         <path

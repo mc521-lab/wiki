@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import type { IMCWFrameColor } from "@/modules/StaticKey";
-    import MCWButtonBase from "./MCWButtonBase.vue";
+    import { MCWButtonBase } from ".";
 
     defineProps<{
         open: boolean;

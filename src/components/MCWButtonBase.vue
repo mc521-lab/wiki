@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { computed, ref } from "vue";
     import type { IMCWFrameColor } from "@/modules/StaticKey";
-    import MCWFrame from "./MCWFrame.vue";
+    import { MCWFrame } from ".";
 
     interface Props {
         size?: number;

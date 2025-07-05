@@ -13,6 +13,11 @@ export default defineConfig({
             "@": fileURLToPath(new URL("./src", import.meta.url)),
         },
     },
+    server: {
+        watch: {
+            ignored: ["**/*.md", "**/builder/**"],
+        },
+    },
     base: "/wiki",
     envPrefix: ["MCW_"],
 });

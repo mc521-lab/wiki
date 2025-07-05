@@ -9,7 +9,7 @@
 
 <template>
     <div class="mcw-card w-full" :style="{ '--mcw-card-color': color ?? '#F6F9FA' }">
-        <MCWFrame :color="color ?? '#F6F9FA'" :inner-class="innerClass + 'h-full w-full p-2'" use-color>
+        <MCWFrame :color="color ?? '#F6F9FA'" :inner-class="innerClass + ' h-full w-full p-2'" use-color>
             <slot />
         </MCWFrame>
     </div>

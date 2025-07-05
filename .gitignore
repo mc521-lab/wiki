@@ -28,3 +28,16 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Build by MCW Builder, should not be committed
+/src/views/w/**/*.vue
+!/src/views/w/**/Wiki.vue
+
+# Docs files that should not be committed
+/docs/**/*.md
+!docs/General/**/*.md
+!docs/Zhucheng/**/*.md
+!docs/Diaoyu/**/*.md
+!docs/Fuben/**/*.md
+!docs/Mota/**/*.md
+!docs/Huodong/**/*.md

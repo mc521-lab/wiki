@@ -1,4 +1,5 @@
 import "./assets/main.css";
+import "./assets/mcw.css";
 import "./assets/default.css";
 
 import { createApp } from "vue";
