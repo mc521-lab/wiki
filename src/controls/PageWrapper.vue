@@ -96,14 +96,14 @@
     <div class="w-full h-full relative">
         <Transition name="fade" mode="out-in">
             <MCWMain class="top-0 left-0 absolute flex flex-col gap-2" v-if="isLoading">
-                <h2 class="mcw-h2">{{ getPageName() }}</h2>
+                <h2 class="mcw-h2 mt-0!">{{ getPageName() }}</h2>
                 <p class="mcw-p">页面加载中…… 请稍等，如果长时间未加载，请<a href="#" class="underline" @click="$window.location.reload()">刷新</a>页面。</p>
             </MCWMain>
         </Transition>
         <Transition name="fade" mode="out-in">
             <div class="w-full h-full absolute top-0 left-0" v-if="!isLoading">
                 <MCWMain class="flex flex-col gap-2">
-                    <h2 class="mcw-h2" v-if="!metaStore.getMeta.home">
+                    <h2 class="mcw-h2 mt-0!" v-if="!metaStore.getMeta.home">
                         {{ getPageName() }}
                     </h2>
                     <component :is="currentComponent" />
