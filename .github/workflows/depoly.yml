@@ -55,7 +55,7 @@ jobs:
                   echo "PAGES_COUNT=$count" >> $GITHUB_ENV
 
             - name: Build Dynamic Pages
-              run: .\gen\mcw-builder.exe
+              run: ./gen/mcw-builder.exe
 
             - name: Build Vue project
               env:
